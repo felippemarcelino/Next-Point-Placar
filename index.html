@@ -110,7 +110,12 @@ function dq2(id){M=M.filter(function(m){return m.id!=id});V.dq=null;save();rende
 function dqHtml(){if(!V.dq)return"";var m=M.find(function(z){return z.id==V.dq});if(!m)return"";return'<div class="sheet"><div style="margin-bottom:8px"><b>Apagar este jogo?</b><div class="mut">'+fd(m.date)+" · "+esc(m.pn||"Carol")+" x "+esc(m.opp)+" · "+score(replay(m))+". Não dá para desfazer.</div></div><div class=\"g\">"+bt("l","dq2("+m.id+")","Apagar")+bt("","V.dq=null;render()","Cancelar")+"</div></div>"}
 function fd(d){return d.split("-").reverse().join("/")}
 function cur(){return M.find(function(m){return m.id==V.id})}
-function go(t,id){V.tab=t;V.id=id||null;V.pend=null;V.f1=false;V.redo=[];V.cd=null;V.box=null;V.endq=false;V.dq=null;render()}
+function hs(k,s){try{history[k+"State"](s,"");return true}catch(e){return false}}
+function go(t,id){var dt=t=="m"||t=="r"||t=="n",st={t:t,id:id||null};V.tab=t;V.id=id||null;V.pend=null;V.f1=false;V.redo=[];V.cd=null;V.box=null;V.endq=false;V.dq=null;
+if(dt){if(V.d==1)hs("replace",st);else if(hs("push",st))V.d=1}else{if(V.d==1){V.d=0;V.skip=1;try{history.back()}catch(e){V.skip=0}}else hs("replace",st)}
+render()}
+window.addEventListener("popstate",function(e){if(V.skip){V.skip=0;hs("replace",{t:V.tab,id:null});return}var s=e.state||{t:"j",id:null},dt=s.t=="m"||s.t=="r"||s.t=="n";V.d=dt?1:0;V.tab=s.t;V.id=s.id||null;V.pend=null;V.f1=false;V.redo=[];V.endq=false;V.dq=null;V.box=null;V.cd=null;render()});
+hs("replace",{t:"j",id:null});
 function newMatch(){var q=function(i){return document.getElementById(i)},o=q("opp").value.trim();if(!o)return;var m={id:Date.now(),opp:o,pn:q("p0").value.trim()||"Carol",torn:q("tn").value.trim(),date:q("dt").value,first:+q("fs").value,stw:+q("sw").value,gm:+q("gm").value,tb:+q("tp").value,fin:q("fr").value,supN:+q("sn").value,noAd:q("na").value=="1",pts:[],done:false,el:0,run:Date.now()};M.push(m);save();go("m",m.id)}
 function rec(w,t,sh,er){var m=cur(),R=replay(m),s=R.srv;if(t=="ace")w=s;if(t=="df")w=1-s;m.pts.push({w:w,t:t,sh:sh||null,er:er||null,f1:V.f1||t=="df",ts:el(m)});V.redo=[];V.f1=false;V.pend=null;save();render()}
 function ask(w,t){V.pend={w:w,t:t};render()}
